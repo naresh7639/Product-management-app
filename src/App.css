@@ -1,0 +1,55 @@
+App.css
+
+/* General font */
+/* body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f9;
+} */
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #007bff;
+  color: white;
+  padding: 15px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Header title */
+.header h1 {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Navigation buttons */
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  background-color: transparent;
+  color: white;
+}
+
+.nav-button.active {
+  background-color: white;
+  color: #007bff;
+}
+
+/* Main content */
+.main-content {
+  padding: 20px;
+  min-height: 100vh;
+}

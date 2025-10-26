@@ -225,7 +225,7 @@ export default function ProductManagementApp() {
               </button>
               <button
                 onClick={() => {
-                  setCurrentPage("manage");
+                  setCurrentPage("anage");
                   clearFun();
                 }}
                 className="btn-secondary"
@@ -404,7 +404,7 @@ export default function ProductManagementApp() {
           <div className="content-box">
             <h2 className="page-title">
               <Package className="icon-primary" />
-              Manage Products (CRUD)
+              Manage Products
             </h2>
 
             {/* ADD/EDIT FORM */}
