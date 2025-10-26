@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Search,
   Package,
@@ -19,13 +19,30 @@ export default function ProductManagementApp() {
 
   const categories = [...new Set(products.map((p) => p.category))].sort();
 
+  useEffect(() => {
+    handleProductSearch2(products);
+  }, [products]);
+
   const handleProductSearch = () => {
     const product = products.find((p) => p.product_id === parseInt(productId));
+    setSelectedProduct(product);
+  };
+  const handleProductSearch2 = (data) => {
+    const product = products.find((p) => p.product_id === parseInt(data));
     setSelectedProduct(product);
   };
 
   const getProductsByCategory = (category) => {
     return products.filter((p) => p.category === category);
+  };
+  const getAllProduct = (category) => {
+    return products;
+  };
+
+  const clearFun = () => {
+    setProductId("");
+    setSelectedCategory("");
+    setSelectedProduct("");
   };
 
   return (
@@ -39,7 +56,10 @@ export default function ProductManagementApp() {
             </h1>
             <div className="nav-buttons">
               <button
-                onClick={() => setCurrentPage("home")}
+                onClick={() => {
+                  setCurrentPage("home");
+                  clearFun();
+                }}
                 className={`nav-button ${
                   currentPage === "home" ? "active" : ""
                 }`}
@@ -47,7 +67,10 @@ export default function ProductManagementApp() {
                 Home
               </button>
               <button
-                onClick={() => setCurrentPage("product")}
+                onClick={() => {
+                  setCurrentPage("product");
+                  clearFun();
+                }}
                 className={`nav-button ${
                   currentPage === "product" ? "active" : ""
                 }`}
@@ -55,12 +78,26 @@ export default function ProductManagementApp() {
                 Search Product
               </button>
               <button
-                onClick={() => setCurrentPage("category")}
+                onClick={() => {
+                  setCurrentPage("category");
+                  clearFun();
+                }}
                 className={`nav-button ${
                   currentPage === "category" ? "active" : ""
                 }`}
               >
                 Browse Categories
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentPage("AllProducts");
+                  clearFun();
+                }}
+                className={`nav-button ${
+                  currentPage === "AllProducts" ? "active" : ""
+                }`}
+              >
+                All Products
               </button>
             </div>
           </div>
@@ -77,16 +114,31 @@ export default function ProductManagementApp() {
             </p>
             <div className="home-buttons">
               <button
-                onClick={() => setCurrentPage("product")}
+                onClick={() => {
+                  setCurrentPage("product");
+                  clearFun();
+                }}
                 className="btn-primary"
               >
                 Search Product
               </button>
               <button
-                onClick={() => setCurrentPage("category")}
+                onClick={() => {
+                  setCurrentPage("category");
+                  clearFun();
+                }}
                 className="btn-secondary"
               >
                 Browse Categories
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentPage("All Products");
+                  clearFun();
+                }}
+                className="btn-secondary"
+              >
+                All Products
               </button>
             </div>
           </div>
@@ -102,7 +154,10 @@ export default function ProductManagementApp() {
               <input
                 type="number"
                 value={productId}
-                onChange={(e) => setProductId(e.target.value)}
+                onChange={(e) => {
+                  setProductId(e.target.value);
+                  handleProductSearch2(e.target.value);
+                }}
                 placeholder="Enter Product ID (1-50)"
                 className="search-input"
               />
@@ -210,6 +265,46 @@ export default function ProductManagementApp() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {currentPage === "AllProducts" && (
+          <div className="content-box">
+            <h2 className="page-title">
+              <Tag className="icon-green" />
+              All Products
+            </h2>
+
+            {
+              <div>
+                <div className="products-grid">
+                  {getAllProduct().map((product) => (
+                    <div key={product.product_id} className="product-card">
+                      <h4>{product.name}</h4>
+                      <div className="card-details">
+                        <p>
+                          <strong>ID:</strong> {product.product_id}
+                        </p>
+                        <p>
+                          <strong>Price:</strong> ${product.price_per_unit}/
+                          {product.unit_type}
+                        </p>
+                        <p>
+                          <strong>Stock:</strong> {product.quantity_in_stock}
+                        </p>
+                        <p>
+                          <strong>Expires:</strong>{" "}
+                          {product.expiration_date || "N/A"}
+                        </p>
+                        <p>
+                          <strong>Supplier:</strong> {product.supplier_id}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
           </div>
         )}
       </div>
