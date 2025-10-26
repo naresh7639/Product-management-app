@@ -223,6 +223,15 @@ export default function ProductManagementApp() {
               >
                 All Products
               </button>
+              <button
+                onClick={() => {
+                  setCurrentPage("manage");
+                  clearFun();
+                }}
+                className="btn-secondary"
+              >
+                Manage Products
+              </button>
             </div>
           </div>
         )}
