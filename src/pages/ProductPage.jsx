@@ -133,7 +133,7 @@ export default function ProductManagementApp() {
               </button>
               <button
                 onClick={() => {
-                  setCurrentPage("All Products");
+                  setCurrentPage("AllProducts");
                   clearFun();
                 }}
                 className="btn-secondary"
