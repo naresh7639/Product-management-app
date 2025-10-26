@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react"; // include useRef
+
 import {
   Search,
   Package,
@@ -10,12 +11,21 @@ import {
 } from "lucide-react";
 import "../styles/ProductPage.css";
 import { products } from "../data/products";
+import { products as initialProducts } from "../data/products";
 
 export default function ProductManagementApp() {
+  const formRef = useRef(null);
   const [currentPage, setCurrentPage] = useState("home");
   const [productId, setProductId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productList, setProductList] = useState(
+    JSON.parse(localStorage.getItem("products")) || initialProducts
+  );
+
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(productList));
+  }, [productList]);
 
   const categories = [...new Set(products.map((p) => p.category))].sort();
 
@@ -43,6 +53,68 @@ export default function ProductManagementApp() {
     setProductId("");
     setSelectedCategory("");
     setSelectedProduct("");
+  };
+
+  // CRUD Functions
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    price_per_unit: "",
+    unit_type: "",
+    quantity_in_stock: "",
+    expiration_date: "",
+    supplier_id: "",
+  });
+
+  const [editingId, setEditingId] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleAddOrUpdate = () => {
+    if (!formData.name || !formData.category || !formData.price_per_unit) {
+      alert("Please fill all required fields!");
+      return;
+    }
+
+    if (editingId) {
+      // Update existing product
+      const updated = productList.map((p) =>
+        p.product_id === editingId ? { ...formData, product_id: editingId } : p
+      );
+      setProductList(updated);
+      setEditingId(null);
+    } else {
+      // Add new product
+      const newProduct = {
+        ...formData,
+        product_id: productList.length + 1,
+      };
+      setProductList([...productList, newProduct]);
+    }
+
+    setFormData({
+      name: "",
+      category: "",
+      price_per_unit: "",
+      unit_type: "",
+      quantity_in_stock: "",
+      expiration_date: "",
+      supplier_id: "",
+    });
+  };
+
+  const handleEdit = (product) => {
+    setFormData(product);
+    setEditingId(product.product_id);
+    formRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      setProductList(productList.filter((p) => p.product_id !== id));
+    }
   };
 
   return (
@@ -98,6 +170,17 @@ export default function ProductManagementApp() {
                 }`}
               >
                 All Products
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentPage("manage");
+                  clearFun();
+                }}
+                className={`nav-button ${
+                  currentPage === "manage" ? "active" : ""
+                }`}
+              >
+                Manage Products
               </button>
             </div>
           </div>
@@ -305,6 +388,111 @@ export default function ProductManagementApp() {
                 </div>
               </div>
             }
+          </div>
+        )}
+
+        {currentPage === "manage" && (
+          <div className="content-box">
+            <h2 className="page-title">
+              <Package className="icon-primary" />
+              Manage Products (CRUD)
+            </h2>
+
+            {/* ADD/EDIT FORM */}
+            <div ref={formRef} className="crud-form">
+              <h3>{editingId ? "Edit Product" : "Add New Product"}</h3>
+              <div className="form-grid">
+                <input
+                  name="name"
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+                <input
+                  name="category"
+                  placeholder="Category"
+                  value={formData.category}
+                  onChange={handleChange}
+                />
+                <input
+                  name="price_per_unit"
+                  type="number"
+                  placeholder="Price"
+                  value={formData.price_per_unit}
+                  onChange={handleChange}
+                />
+                <input
+                  name="unit_type"
+                  placeholder="Unit Type (kg, pcs)"
+                  value={formData.unit_type}
+                  onChange={handleChange}
+                />
+                <input
+                  name="quantity_in_stock"
+                  type="number"
+                  placeholder="Stock"
+                  value={formData.quantity_in_stock}
+                  onChange={handleChange}
+                />
+                <input
+                  name="expiration_date"
+                  placeholder="Expiration Date"
+                  value={formData.expiration_date}
+                  onChange={handleChange}
+                />
+                <input
+                  name="supplier_id"
+                  placeholder="Supplier ID"
+                  value={formData.supplier_id}
+                  onChange={handleChange}
+                />
+              </div>
+              <button className="btn-primary" onClick={handleAddOrUpdate}>
+                {editingId ? "Update Product" : "Add Product"}
+              </button>
+            </div>
+
+            {/* PRODUCT TABLE */}
+            <h3 style={{ marginTop: "30px" }}>Product List</h3>
+            <table className="crud-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Supplier</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productList.map((p) => (
+                  <tr key={p.product_id}>
+                    <td>{p.product_id}</td>
+                    <td>{p.name}</td>
+                    <td>{p.category}</td>
+                    <td>${p.price_per_unit}</td>
+                    <td>{p.quantity_in_stock}</td>
+                    <td>{p.supplier_id}</td>
+                    <td>
+                      <button
+                        className="btn-secondary"
+                        onClick={() => handleEdit(p)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn-danger"
+                        onClick={() => handleDelete(p.product_id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

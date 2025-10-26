@@ -40,6 +40,7 @@
 .nav-buttons {
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .nav-button {
@@ -286,3 +287,59 @@
   border-color: #007bff;
   outline: none;
 }
+
+
+
+
+
+/*  */
+
+
+.crud-form {
+  margin-top: 20px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.form-grid input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.crud-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.crud-table th,
+.crud-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.crud-table th {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
