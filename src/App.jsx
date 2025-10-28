@@ -1,12 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductPage from "./pages/ProductPage";
 import Dashboard from "./pages/Dashboard";
+// Optional: load some default data if localStorage is empty
+import { products as sampleProducts } from "./data/products";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("dashboard");
-  const [products, setProducts] = useState(
-    JSON.parse(localStorage.getItem("products")) || []
-  );
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const savedProducts = JSON.parse(localStorage.getItem("products"));
+    if (savedProducts && savedProducts.length > 0) {
+      setProducts(savedProducts);
+    } else {
+      setProducts(sampleProducts || []);
+      localStorage.setItem("products", JSON.stringify(sampleProducts || []));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (products.length >= 0) {
+      localStorage.setItem("products", JSON.stringify(products));
+    }
+  }, [products]);
 
   const headerStyle = {
     display: "flex",
@@ -35,26 +51,16 @@ function App() {
     minHeight: "100vh",
   };
 
-  const cardStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    padding: "20px",
-    borderRadius: "10px",
-    border: "1px solid #ddd",
+  const smallButton = {
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    padding: "10px 16px",
+    borderRadius: "6px",
     cursor: "pointer",
-    transition: "0.2s ease",
-  };
-
-  const cardHover = {
-    transform: "translateY(-2px)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-  };
-
-  const cardIconStyle = {
-    fontSize: "28px",
-    color: "#007bff",
+    fontWeight: "bold",
+    fontSize: "14px",
+    marginBottom: "16px",
   };
 
   return (
@@ -77,32 +83,17 @@ function App() {
       </header>
 
       <main style={mainStyle}>
-        {/* Simple Attractive Card */}
         {currentPage !== "product" && (
-          <div
-            style={cardStyle}
+          <button
+            style={smallButton}
             onClick={() => setCurrentPage("product")}
-            onMouseOver={(e) =>
-              Object.assign(e.currentTarget.style, cardHover)
-            }
-            onMouseOut={(e) =>
-              Object.assign(e.currentTarget.style, {
-                transform: "translateY(0)",
-                boxShadow: "none",
-              })
-            }
           >
-            <div>
-              <h2 style={{ margin: 0, color: "#333" }}>Manage Products</h2>
-              <p style={{ margin: "5px 0 0", color: "#666", fontSize: "14px" }}>
-                Click here to view or edit your product list
-              </p>
-            </div>
-            <div style={cardIconStyle}>📦</div>
-          </div>
+             Manage Products
+          </button>
         )}
 
         {currentPage === "dashboard" && <Dashboard products={products} />}
+
         {currentPage === "product" && (
           <ProductPage products={products} setProducts={setProducts} />
         )}
@@ -112,3 +103,4 @@ function App() {
 }
 
 export default App;
+  
